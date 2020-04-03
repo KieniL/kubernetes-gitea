@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name:  gitea
+  labels:
+    app:  gitea
+spec:
+  ports:
+  - port: 3000
+    name:  gitea-app
+    targetPort: gitea
+    nodePort: 32000
+  type: NodePort
+  selector:
+    app:  gitea
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name:  postgres
+  labels:
+    app:  postgres
+spec:
+  ports:
+  - port: 5432
+    name:  postgres
+    #nodePort: 32005
+  type: ClusterIP
+  selector:
+    app:  postgres

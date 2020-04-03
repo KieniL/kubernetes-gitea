@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitea #Name of the deployments
+spec:
+  replicas: 1 #Number of created pods
+  selector:
+    matchLabels:
+      app: gitea
+  template:
+    metadata:
+      labels:
+        app: gitea #label to set in the pods
+    spec:
+      containers:
+      - name: gitea
+        image: gitea/gitea
+        resources:
+          limits:
+            memory: "256Mi"
+          requests:
+            memory: "64Mi"
+        env:
+        - name: DB_TYPE
+          value: postgres
+        - name: DB_HOST
+          value: postgres:5432
+        - name: DB_NAME
+          value: pgdb
+        - name: DB_USER
+          value: pguser
+        - name: DB_PASSWD
+          value: pgpass
+        - name: APP_NAME
+          value: "My GIT Server"
+        ports:   
+        - containerPort: 3000
+          name: gitea
+        livenessProbe: #Check that pod is ready
+          httpGet:
+            path: / #path to check
+            port: 3000
+          initialDelaySeconds: 30 #start checking after 30 seconds
+          periodSeconds: 30 #check every 30 seconds
+        readinessProbe: #Check that pod is healthy
+          httpGet:
+            path: / #path to check
+            port: 3000 #port to check
+          initialDelaySeconds: 15 #start checking after 15 seconds
+          periodSeconds: 3 #check every 3 seconds
